@@ -1,8 +1,21 @@
+'use strict';
+
+require('dotenv').config();
+
 import { NestFactory } from '@nestjs/core';
+import * as express from 'express';
+import * as bodyParser from 'body-parser';
 import { ApplicationModule } from './modules/app.module';
 
-async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
-  await app.listen(3000);
+const instance = express();
+/* Express middleware. */
+instance.use(bodyParser.json());
+instance.use(bodyParser.urlencoded({ extended: false }));
+/* End of express middleware. */
+
+async function bootstrap(): Promise<any> {
+    const app = await NestFactory.create(ApplicationModule, instance);
+    await app.listen(3000);
 }
-bootstrap();
+
+bootstrap().then(() => console.log('Application is listening on port 3000.'));
