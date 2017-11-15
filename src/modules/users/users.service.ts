@@ -2,6 +2,7 @@
 
 import { Component, Inject } from '@nestjs/common';
 import { Model } from 'sequelize-typescript';
+import { MessageCodeError } from '../common/lib/error/MessageCodeError';
 import { IUser, IUserService } from './interfaces/index';
 import { User } from './user.entity';
 
@@ -33,11 +34,13 @@ export class UsersService implements IUserService {
     public async update(id: number, newValue: IUser): Promise<User | null> {
         return await this.sequelizeInstance.transaction(async transaction => {
             let user = await this.usersRepository.findById<User>(id, { transaction });
-            if (!user) console.log("user already exists");
+            if (!user) {
+                throw new MessageCodeError('user:notFound');
+            }
 
             user = this._assign(user, newValue);
             return await user.save({
-                returning:true,
+                returning: true,
                 transaction
             });
         });

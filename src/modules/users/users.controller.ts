@@ -1,6 +1,7 @@
 'use strict';
 
 import { Controller, Get, Post, Put, Delete, HttpStatus, Request, Response } from '@nestjs/common';
+import { MessageCodeError } from '../common/index';
 import { UsersService } from './users.service';
 
 @Controller()
@@ -16,9 +17,8 @@ export class UsersController {
     @Post('users')
     public async create( @Request() req, @Response() res) {
         const body = req.body;
-        console.log(body);
         if (!body || (body && Object.keys(body).length === 0)) {
-            console.log("missing information");
+            throw new MessageCodeError('user:create:missingInformation');
         }
 
         let user = await this.usersService.create(req.body);
@@ -28,21 +28,23 @@ export class UsersController {
     @Get('users/:id')
     public async show( @Request() req, @Response() res) {
         const id = req.params.id;
-
-        console.log(req.params);
         if (!id) {
-            console.log("id is missing");
+            throw new MessageCodeError('user:show:missingId');
         }
 
         const user = await this.usersService.findById(id);
+        if (!user) {
+            throw new MessageCodeError('user:show:missingId');
+        }
         return res.status(HttpStatus.OK).json(user);
     }
 
     @Put('users/:id')
     public async update( @Request() req, @Response() res) {
         const id = req.params.id;
-        if (!id)
-            console.log("id is missing");
+        if (!id) {
+            throw new MessageCodeError('user:update:missingId');
+        }
 
         const user = await this.usersService.update(id, req.body);
         return res.status(HttpStatus.OK).send(user);

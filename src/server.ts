@@ -5,6 +5,7 @@ require('dotenv').config();
 import { NestFactory } from '@nestjs/core';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import { DispatchError } from './modules/common/filters/DispatchError';
 import { ApplicationModule } from './modules/app.module';
 
 const instance = express();
