@@ -28,7 +28,12 @@ export class DispatchError implements ExceptionFilter {
             res.setHeader('x-message', (err as ValidationError).errors[0].message);
             res.setHeader('x-httpStatus-error', HttpStatus.BAD_REQUEST);
 
-            return res.status(HttpStatus.BAD_REQUEST).send();
+            let data = {
+                "status" : 0,
+                "message" : (err as ValidationError).errors[0].message
+            }
+
+            return res.status(HttpStatus.BAD_REQUEST).send(data);
         } else {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
         }
