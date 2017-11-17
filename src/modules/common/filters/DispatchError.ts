@@ -9,12 +9,19 @@ import { ValidationError } from 'sequelize';
 export class DispatchError implements ExceptionFilter {
     public catch(err, res) {
         if (err instanceof MessageCodeError) {
+            console.log("coming here");
+            console.log(err);
             /* MessageCodeError, Set all header variable to have a context for the client in case of MessageCodeError. */
             res.setHeader('x-message-code-error', err.messageCode);
             res.setHeader('x-message', err.message);
             res.setHeader('x-httpStatus-error', err.httpStatus);
 
-            return res.status(err.httpStatus).send();
+            let data = {
+                "status" : 0,
+                "message" : err.message
+            }
+
+            return res.status(err.httpStatus).send(data);
         } else if (err instanceof ValidationError) {
             /* Sequelize validation error. */
             res.setHeader('x-message-code-error', (err as ValidationError).errors[0].type);

@@ -16,6 +16,7 @@ instance.use(bodyParser.urlencoded({ extended: false }));
 
 async function bootstrap(): Promise<any> {
     const app = await NestFactory.create(ApplicationModule, instance);
+    app.useGlobalFilters(new DispatchError());
     await app.listen(3000);
 }
 
